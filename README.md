@@ -106,7 +106,7 @@ O script `menu_ecommerce.py` fornece uma interface de linha de comando que permi
 ## 📚 Autor
 
 **André Siqueira**
-Universidade Católica de Pernambuco — Ciência da Computação (3º Período)
+Universidade Católica de Pernambuco — Ciência da Computação (4º Período)
 Recife — PE
 Desenvolvido como parte do projeto acadêmico de Banco de Dados.
 
