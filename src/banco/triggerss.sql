@@ -1,69 +1,63 @@
+USE ecommerce;
+
+--Triggers
+
 DELIMITER $$
-CREATE TRIGGER bonus_vendedor
-AFTER INSERT
-ON CompraVenda
+CREATE TRIGGER trg_vendedor_especial
+AFTER INSERT ON CompraVenda
 FOR EACH ROW
 BEGIN
-    DECLARE total_vendas DOUBLE;
-    DECLARE MESSAGE_TEXT TEXT;
+   DECLARE total_vendas DOUBLE;
+   DECLARE bonus_total DOUBLE;
+   DECLARE mensagem VARCHAR(255);
+   SELECT SUM(p.valor)
+   INTO total_vendas
+   FROM CompraVenda cv
+   INNER JOIN Produto p ON cv.idProduto = p.id
+   WHERE cv.idVendedor = NEW.idVendedor;
+   IF total_vendas > 1000 THEN
+       INSERT INTO FuncionarioEspecial (idVendedor, bonus)
+       VALUES (NEW.idVendedor, total_vendas * 0.05)
+       ON DUPLICATE KEY UPDATE bonus = total_vendas * 0.05;
+       SELECT SUM(bonus) INTO bonus_total FROM FuncionarioEspecial;
+       SET mensagem = CONCAT('Total de bônus necessário: R$ ', ROUND(IFNULL(bonus_total, 0), 2));
+       INSERT INTO Notificacao (mensagem) VALUES (mensagem);
+   END IF;
+END$$
+DELIMITER ;
 
-    -- Soma tudo que o vendedor já vendeu
-    SELECT SUM(p.valor)
-    INTO total_vendas
-    FROM CompraVenda cv
-    JOIN Produto p ON cv.idProduto = p.id
-    WHERE cv.idVendedor = NEW.idVendedor;
-
-    -- Se passou de 1000, adiciona à tabela de funcionário especial
-    IF total_vendas > 1000 THEN
-        INSERT INTO FuncionarioEspecial (idVendedor, bonus)
-        VALUES (NEW.idVendedor, total_vendas * 0.05);
-	-- Um "Print" em SQL
-        SIGNAL SQLSTATE '01000';
-        SET MESSAGE_TEXT = CONCAT('Bônus total de R$', total_vendas * 0.05, ' será necessário para custear.');
-    END IF;
-END $$
-
-CREATE TRIGGER cashBackCliente
-AFTER INSERT
-ON CompraVenda
+DELIMITER $$
+CREATE TRIGGER trg_cliente_especial
+AFTER INSERT ON CompraVenda
 FOR EACH ROW
 BEGIN
-	DECLARE totalCompras DOUBLE;
-    DECLARE cashback DOUBLE;
-    DECLARE message TEXT;
-    
-    SELECT SUM(p.compras)
-    INTO totalCompras
-    FROM CompraVenda cv
-    JOIN Produto p ON cv.idProduto = p.id
-    WHERE cv.idCliente = NEW.idCliente;
-    
-    IF totalCompras > 500 THEN
-		SET cashback = totalCompras * 0.02;
-        
-		INSERT INTO ClienteEspecial(id, cashback)
-        VALUES(NEW.idCliente, cashback)
-        ON DUPLICATE KEY UPDATE cashback = cashback;
-        
-        SIGNAL SQLSTATE '01000';
-        SET message = CONCAT('Valor de cashback total: R$', cashback);
-        
-        END IF;
-	END $$
-    
-  DELIMITER $$
+   DECLARE total_compras DOUBLE;
+   DECLARE cashback_total DOUBLE;
+   DECLARE mensagem VARCHAR(255);
+   SELECT SUM(p.valor)
+   INTO total_compras
+   FROM CompraVenda cv
+   INNER JOIN Produto p ON cv.idProduto = p.id
+   WHERE cv.idCliente = NEW.idCliente;
+   IF total_compras > 500 THEN
+       INSERT INTO ClienteEspecial (id, cashBack)
+       VALUES (NEW.idCliente, total_compras * 0.02)
+       ON DUPLICATE KEY UPDATE cashBack = total_compras * 0.02;
+       SELECT SUM(cashBack) INTO cashback_total FROM ClienteEspecial;
+       SET mensagem = CONCAT('Total de cashback necessário: R$ ', ROUND(IFNULL(cashback_total, 0), 2));
+       INSERT INTO Notificacao (mensagem) VALUES (mensagem);
+   END IF;
+END$$
+DELIMITER ;
 
-CREATE TRIGGER remove_cliente_especial
-BEFORE UPDATE
-ON ClienteEspecial
+
+DROP TRIGGER IF EXISTS trg_remove_cliente_especial;
+DELIMITER $$
+CREATE TRIGGER trg_remove_cliente_especial
+AFTER DELETE ON ClienteEspecial
 FOR EACH ROW
 BEGIN
-    IF NEW.cashBack <= 0 THEN
-        DELETE FROM ClienteEspecial WHERE id = OLD.id;
-        SIGNAL SQLSTATE '01000'
-        SET MESSAGE_TEXT = 'Cliente removido da tabela de clientes especiais (cashback zerado).';
-    END IF;
-END $$
-
+   INSERT INTO Notificacao (mensagem)
+   VALUES (CONCAT('ClienteEspecial removido id=', OLD.id, ' por cashback = 0'));
+END$$
 DELIMITER ;
