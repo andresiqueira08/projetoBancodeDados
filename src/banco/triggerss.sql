@@ -3,7 +3,7 @@ USE ecommerce;
 --Triggers
 
 DELIMITER $$
-CREATE TRIGGER trg_vendedor_especial
+CREATE TRIGGER vendedor_especial
 AFTER INSERT ON CompraVenda
 FOR EACH ROW
 BEGIN
@@ -27,7 +27,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE TRIGGER trg_cliente_especial
+CREATE TRIGGER cliente_especial
 AFTER INSERT ON CompraVenda
 FOR EACH ROW
 BEGIN
@@ -53,7 +53,7 @@ DELIMITER ;
 
 DROP TRIGGER IF EXISTS trg_remove_cliente_especial;
 DELIMITER $$
-CREATE TRIGGER trg_remove_cliente_especial
+CREATE TRIGGER remove_cliente_especial
 AFTER DELETE ON ClienteEspecial
 FOR EACH ROW
 BEGIN

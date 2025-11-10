@@ -2,9 +2,9 @@ import mysql.connector
 
 def conectar():
     return mysql.connector.connect(
-        host="localhost",        # ou 127.0.0.1
+        host="localhost",        
         user="root",             # seu usuário do MySQL
-        password="SENHA_AQUI"    # substitui pela tua senha
+        password="SENHA_AQUI"    # substitui pela senha do workbench
     )
 
 def destruir_banco():
@@ -43,3 +43,11 @@ def cadastrar_cliente():
     cursor.close()
     conexao.close()
 
+def criar_banco():
+    conexao = conectar()
+    cursor = conexao.cursor()
+    cursor.execute("CREATE DATABASE IF NOT EXISTS ecommerce;")
+    conexao.commit()
+    print("Banco de dados criado com sucesso!")
+    cursor.close()
+    conexao.close()

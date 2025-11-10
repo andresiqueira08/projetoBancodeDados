@@ -35,27 +35,4 @@ BEGIN
    RETURN IFNULL(total, 0);
 END$$
 DELIMITER ;
--- TRIGGER - VENDEDOR ESPECIAL --------------------------------
-DELIMITER $$
-CREATE TRIGGER trg_vendedor_especial
-AFTER INSERT ON CompraVenda
-FOR EACH ROW
-BEGIN
-   DECLARE total_vendas DOUBLE;
-   DECLARE bonus_total DOUBLE;
-   DECLARE mensagem VARCHAR(255);
-   SELECT SUM(p.valor)
-   INTO total_vendas
-   FROM CompraVenda cv
-   INNER JOIN Produto p ON cv.idProduto = p.id
-   WHERE cv.idVendedor = NEW.idVendedor;
-   IF total_vendas > 1000 THEN
-       INSERT INTO FuncionarioEspecial (idVendedor, bonus)
-       VALUES (NEW.idVendedor, total_vendas * 0.05)
-       ON DUPLICATE KEY UPDATE bonus = total_vendas * 0.05;
-       SELECT SUM(bonus) INTO bonus_total FROM FuncionarioEspecial;
-       SET mensagem = CONCAT('Total de bônus necessário: R$ ', ROUND(IFNULL(bonus_total, 0), 2));
-       INSERT INTO Notificacao (mensagem) VALUES (mensagem);
-   END IF;
-END$$
-DELIMITER ;
+
