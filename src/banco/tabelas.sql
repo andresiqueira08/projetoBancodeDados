@@ -43,6 +43,7 @@ CREATE TABLE Produto (
    nome VARCHAR(50),
    descricao VARCHAR(100),
    valor DOUBLE,
+   quatidadeEstoque INT,
    obs TEXT
 );
 

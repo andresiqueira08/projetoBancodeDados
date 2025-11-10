@@ -27,3 +27,16 @@ JOIN ClienteEspecial ce ON c.idCliente = ce.idCliente
 LEFT JOIN CompraVenda cv ON c.idCliente = cv.idCliente
 GROUP BY c.idCliente, c.nome, c.email, ce.cashBack, ce.nivel
 ORDER BY valor_total_gasto DESC;
+
+CREATE VIEW viewProdutosMaisVendidos AS
+SELECT 
+    p.id AS idProduto,
+    p.nome AS produto,
+    p.valor,
+    COUNT(cv.id) AS total_vendas,
+    SUM(p.valor) AS valor_total_vendido,
+    MAX(cv.data) AS ultima_venda
+FROM Produto p
+LEFT JOIN CompraVenda cv ON p.id = cv.idProduto
+GROUP BY p.id, p.nome, p.valor
+ORDER BY total_vendas DESC, valor_total_vendido DESC;
