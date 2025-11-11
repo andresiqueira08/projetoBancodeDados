@@ -46,7 +46,7 @@ CREATE TABLE Produto (
    id INT AUTO_INCREMENT PRIMARY KEY,
    nome VARCHAR(50) NOT NULL,
    descricao VARCHAR(255),
-   preco DECIMAL(10,2) NOT NULL,
+   valor DOUBLE NOT NULL,
    quantidadeEstoque INT DEFAULT 0,
    obs TEXT
 );
