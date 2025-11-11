@@ -28,7 +28,7 @@ RETURNS DOUBLE
 DETERMINISTIC
 BEGIN
    DECLARE total DOUBLE;
-   SELECT SUM(p.valor) INTO total
+   SELECT SUM(p.preco) INTO total
    FROM CompraVenda cv
    INNER JOIN Produto p ON cv.idProduto = p.id
    WHERE cv.idVendedor = p_idVendedor AND cv.data = p_data;
@@ -90,7 +90,7 @@ BEGIN
         p.nome AS produto,
         v.nome AS vendedor,
         COUNT(cv.idProduto) AS total_vendido,
-        SUM(p.valor) AS valor_total,
+        SUM(p.preco) AS valor_total,
         MONTH(cv.data) AS mes
     FROM CompraVenda cv
     JOIN Produto p ON cv.idProduto = p.id
