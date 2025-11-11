@@ -72,8 +72,9 @@ BEGIN
 
     -- atualiza estoque
     UPDATE Produto
-    SET quantidadeEstoque = quantidadeEstoque - p_quantidade
-    WHERE id = p_idProduto;
+    SET quantidadeEstoque = quantidadeEstoque - 1
+    WHERE id = id_produto;
+
 
     INSERT INTO Notificacao (mensagem)
     VALUES (CONCAT('Venda registrada - Produto ID ', p_idProduto, ' Qtd: ', p_quantidade));
