@@ -1,92 +1,182 @@
 import mysql.connector
-from conectar import (
-    conectar,
-    criar_banco,
-    destruir_banco,
-    cadastrar_produto,
-    cadastrar_cliente,
-    cadastrar_vendedor,
-    cadastrar_transportadora,
-    registrar_venda,
-    calcular_idade,
-    soma_fretes,
-    arrecadado,
-    listar_notificacoes
-)
 
-print("=== LOGIN NO SISTEMA ===")
-usuario = input("Usuário (admin, gerente, funcionario): ")
-senha = input("Senha: ")
-
-conexao = conectar(usuario, senha)
-if not conexao:
-    exit()
-
-while True:
-    print("\n=== MENU DE OPÇÕES ===")
-    print("0 - Sair")
-
-    if usuario == "admin":
-        print("1 - Criar banco de dados")
-        print("2 - Destruir banco de dados")
-
-    if usuario in ("admin", "gerente"):
-        print("3 - Cadastrar produto")
-        print("4 - Cadastrar cliente")
-        print("5 - Cadastrar vendedor")
-        print("6 - Cadastrar transportadora")
-
-    if usuario in ("admin", "gerente", "funcionario"):
-        print("7 - Registrar venda")
-        print("8 - calcular_idade()")
-        print("9 - soma_fretes()")
-        print("10 - arrecadado()")
-        print("11 - Ver notificações")
+def conectar():
+    user = input("Usuário do MySQL: ")
+    senha = input("Senha do MySQL: ")
 
     try:
-        opcao = int(input("Escolha a opção desejada: ").strip())
-    except ValueError:
-        print("⚠ Entrada inválida! Digite um número.")
-        continue
+        conexao = mysql.connector.connect(
+            host="localhost",
+            user=user,
+            password=senha,
+            database="ecommerce"
+        )
+        print(f"Conectado ao banco como {user}.")
+        return conexao
+    except mysql.connector.Error as err:
+        print(f"Erro ao conectar: {err}")
+        return None
 
-    if opcao == 0:
-        print("Saindo do sistema...")
-        break
 
-    elif opcao == 1 and usuario == "admin":
-        criar_banco(conexao)
+def criar_banco(conexao):
+    cursor = conexao.cursor()
+    try:
+        cursor.execute("DROP DATABASE IF EXISTS ecommerce;")
+        cursor.execute("CREATE DATABASE ecommerce;")
+        cursor.execute("USE ecommerce;")
+        print("Banco criado. Agora rode o script SQL no Workbench para criar tabelas, functions e triggers.")
+    except mysql.connector.Error as err:
+        print(f"Erro ao criar banco: {err}")
+    finally:
+        cursor.close()
 
-    elif opcao == 2 and usuario == "admin":
-        destruir_banco(conexao)
 
-    elif opcao == 3 and usuario in ("admin", "gerente"):
-        cadastrar_produto(conexao)
+def destruir_banco(conexao):
+    cursor = conexao.cursor()
+    try:
+        cursor.execute("DROP DATABASE IF EXISTS ecommerce;")
+        print("Banco destruído.")
+    except mysql.connector.Error as err:
+        print(f"Erro ao destruir banco: {err}")
+    finally:
+        cursor.close()
 
-    elif opcao == 4 and usuario in ("admin", "gerente", "funcionario"):
-        cadastrar_cliente(conexao)
 
-    elif opcao == 5 and usuario in ("admin", "gerente"):
-        cadastrar_vendedor(conexao)
+def cadastrar_produto(conexao):
+    cursor = conexao.cursor()
+    try:
+        idp = int(input("ID do produto: "))
+        nome = input("Nome: ")
+        descricao = input("Descrição: ")
+        valor = float(input("Valor: "))
+        obs = input("Observações: ")
 
-    elif opcao == 6 and usuario in ("admin", "gerente"):
-        cadastrar_transportadora(conexao)
+        cursor.execute("""
+            INSERT INTO Produto (id, nome, descricao, valor, obs)
+            VALUES (%s, %s, %s, %s, %s);
+        """, (idp, nome, descricao, valor, obs))
+        conexao.commit()
+        print("Produto cadastrado.")
+    except mysql.connector.Error as err:
+        print(f"Erro ao cadastrar produto: {err}")
+    finally:
+        cursor.close()
 
-    elif opcao == 7 and usuario in ("admin", "gerente", "funcionario"):
-        registrar_venda(conexao)
 
-    elif opcao == 8:
-        calcular_idade(conexao)
+def cadastrar_cliente(conexao):
+    cursor = conexao.cursor()
+    try:
+        idc = int(input("ID do cliente: "))
+        nome = input("Nome: ")
+        idade = int(input("Idade: "))
+        sexo = input("Sexo (m/f/o): ")
+        nascimento = input("Data de nascimento (YYYY-MM-DD): ")
 
-    elif opcao == 9:
-        soma_fretes(conexao)
+        cursor.execute("""
+            INSERT INTO Cliente (id, nome, idade, sexo, dataNascimento)
+            VALUES (%s, %s, %s, %s, %s);
+        """, (idc, nome, idade, sexo, nascimento))
+        conexao.commit()
+        print("Cliente cadastrado.")
+    except mysql.connector.Error as err:
+        print(f"Erro ao cadastrar cliente: {err}")
+    finally:
+        cursor.close()
 
-    elif opcao == 10:
-        arrecadado(conexao)
 
-    elif opcao == 11:
-        listar_notificacoes(conexao)
+def cadastrar_vendedor(conexao):
+    cursor = conexao.cursor()
+    try:
+        idv = int(input("ID do vendedor: "))
+        nome = input("Nome: ")
+        causa = input("Causa social: ")
+        tipo = input("Tipo (ex: PF, PJ): ")
+        nota = float(input("Nota: "))
 
-    else:
-        print("⚠ Acesso negado ou opção inválida!")
+        cursor.execute("""
+            INSERT INTO Vendedor (id, nome, causa, tipo, nota)
+            VALUES (%s, %s, %s, %s, %s);
+        """, (idv, nome, causa, tipo, nota))
+        conexao.commit()
+        print("Vendedor cadastrado.")
+    except mysql.connector.Error as err:
+        print(f"Erro ao cadastrar vendedor: {err}")
+    finally:
+        cursor.close()
 
-conexao.close()
+
+def cadastrar_transportadora(conexao):
+    cursor = conexao.cursor()
+    try:
+        idt = int(input("ID da transportadora: "))
+        nome = input("Nome: ")
+        cidade = input("Cidade: ")
+
+        cursor.execute("""
+            INSERT INTO Transportadora (id, nome, cidade)
+            VALUES (%s, %s, %s);
+        """, (idt, nome, cidade))
+        conexao.commit()
+        print("Transportadora cadastrada.")
+    except mysql.connector.Error as err:
+        print(f"Erro ao cadastrar transportadora: {err}")
+    finally:
+        cursor.close()
+
+
+def registrar_venda(conexao):
+    cursor = conexao.cursor()
+    try:
+        idvenda = int(input("ID da venda: "))
+        data = input("Data (YYYY-MM-DD): ")
+        hora = input("Hora (HH:MM:SS): ")
+        idc = int(input("ID do cliente: "))
+        idvend = int(input("ID do vendedor: "))
+        idp = int(input("ID do produto: "))
+        idt = int(input("ID da transportadora: "))
+        destino = input("Destino: ")
+        frete = float(input("Valor do frete: "))
+
+        cursor.execute("""
+            INSERT INTO CompraVenda (id, data, hora, idCliente, idVendedor, idProduto, idTransporte, destino, valorFrete)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);
+        """, (idvenda, data, hora, idc, idvend, idp, idt, destino, frete))
+        conexao.commit()
+        print("Venda registrada.")
+    except mysql.connector.Error as err:
+        print(f"Erro ao registrar venda: {err}")
+    finally:
+        cursor.close()
+
+
+def calcular_idade(conexao):
+    cursor = conexao.cursor()
+    idc = int(input("ID do cliente: "))
+    cursor.execute("SELECT calcula_idade(%s)", (idc,))
+    print("Idade:", cursor.fetchone()[0])
+    cursor.close()
+
+
+def soma_fretes(conexao):
+    cursor = conexao.cursor()
+    destino = input("Destino: ")
+    cursor.execute("SELECT soma_fretes(%s)", (destino,))
+    print("Total de fretes:", cursor.fetchone()[0])
+    cursor.close()
+
+
+def arrecadado(conexao):
+    cursor = conexao.cursor()
+    data = input("Data (YYYY-MM-DD): ")
+    idv = int(input("ID do vendedor: "))
+    cursor.execute("SELECT arrecadado(%s, %s)", (data, idv))
+    print("Total arrecadado:", cursor.fetchone()[0])
+    cursor.close()
+
+
+def listar_notificacoes(conexao):
+    cursor = conexao.cursor()
+    cursor.execute("SELECT mensagem, datahora FROM Notificacao ORDER BY id DESC;")
+    for msg, dt in cursor.fetchall():
+        print(f"[{dt}] {msg}")
+    cursor.close()
