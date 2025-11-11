@@ -12,27 +12,27 @@ CREATE TABLE Cliente (
 
 CREATE TABLE ClienteEspecial (
    id INT PRIMARY KEY,
-   cashBack DOUBLE DEFAULT 0,
-   FOREIGN KEY (id) REFERENCES Cliente(id)
+   cashBack DECIMAL(10,2) DEFAULT 0,
+   FOREIGN KEY (id) REFERENCES Cliente(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Cargo (
    id INT AUTO_INCREMENT PRIMARY KEY,
-   nome VARCHAR(50) NOT NULL CHECK (nome IN ('Gerente', 'Vendedor', 'Caixa', 'Estoquista', 'Supervisor'))
+   nome VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Vendedor (
    id INT AUTO_INCREMENT PRIMARY KEY,
    nome VARCHAR(50) NOT NULL,
-   salario DOUBLE DEFAULT 0,
+   salario DECIMAL(10,2) DEFAULT 0,
    idCargo INT,
-   nota DOUBLE DEFAULT 0,
+   nota DECIMAL(5,2) DEFAULT 0,
    FOREIGN KEY (idCargo) REFERENCES Cargo(id)
 );
 
 CREATE TABLE FuncionarioEspecial (
    idVendedor INT PRIMARY KEY,
-   bonus DOUBLE DEFAULT 0,
+   bonus DECIMAL(10,2) DEFAULT 0,
    FOREIGN KEY (idVendedor) REFERENCES Vendedor(id)
 );
 
@@ -46,7 +46,7 @@ CREATE TABLE Produto (
    id INT AUTO_INCREMENT PRIMARY KEY,
    nome VARCHAR(50) NOT NULL,
    descricao VARCHAR(255),
-   preco DOUBLE NOT NULL,
+   preco DECIMAL(10,2) NOT NULL,
    quantidadeEstoque INT DEFAULT 0,
    obs TEXT
 );
@@ -59,8 +59,10 @@ CREATE TABLE CompraVenda (
    idVendedor INT,
    idProduto INT,
    idTransportadora INT,
-   destino VARCHAR(50),
-   valorFrete DOUBLE DEFAULT 0,
+   destino VARCHAR(100),
+   quantidade INT DEFAULT 1,
+   valorFrete DECIMAL(10,2) DEFAULT 0,
+   valorTotal DECIMAL(12,2) AS (quantidade * (SELECT preco FROM Produto WHERE Produto.id = CompraVenda.idProduto)) STORED,
    FOREIGN KEY (idCliente) REFERENCES Cliente(id),
    FOREIGN KEY (idVendedor) REFERENCES Vendedor(id),
    FOREIGN KEY (idProduto) REFERENCES Produto(id),
