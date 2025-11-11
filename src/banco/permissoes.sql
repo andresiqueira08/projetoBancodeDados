@@ -1,17 +1,22 @@
+CREATE DATABASE IF NOT EXISTS ecommerce;
 USE ecommerce;
 
---Implementação de 3 usuários
+DROP USER IF EXISTS 'admin'@'%';
+DROP USER IF EXISTS 'gerente'@'%';
+DROP USER IF EXISTS 'funcionario'@'%';
 
 CREATE USER 'admin'@'%' IDENTIFIED BY 'admin123';
 CREATE USER 'gerente'@'%' IDENTIFIED BY 'gerente123';
 CREATE USER 'funcionario'@'%' IDENTIFIED BY 'func123';
 
+GRANT ALL PRIVILEGES ON ecommerce.* TO 'admin'@'%' WITH GRANT OPTION;
 
-GRANT ALL PRIVILEGES ON ecommerce.* TO 'admin'@'%';
+-- gerente pode ler/escrever em tabelas principais
+GRANT SELECT, INSERT, UPDATE, DELETE ON ecommerce.* TO 'gerente'@'%';
 
-GRANT SELECT, UPDATE, DELETE ON ecommerce.* TO 'gerente'@'%';
-GRANT INSERT, SELECT ON ecommerce.CompraVenda TO 'funcionario'@'%';
-GRANT SELECT ON ecommerce.Produto TO 'funcionario'@'%';
-GRANT SELECT ON ecommerce.Cliente TO 'funcionario'@'%';
-GRANT SELECT ON ecommerce.Vendedor TO 'funcionario'@'%';
+-- funcionário: pode inserir vendas e consultar tabelas; também permitir inserir cliente se desejar
+GRANT INSERT ON ecommerce.CompraVenda TO 'funcionario'@'%';
+GRANT SELECT ON ecommerce.* TO 'funcionario'@'%';
+GRANT INSERT ON ecommerce.Cliente TO 'funcionario'@'%';
+
 FLUSH PRIVILEGES;
