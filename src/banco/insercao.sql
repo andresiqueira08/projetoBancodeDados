@@ -1,6 +1,4 @@
-DELIMITER $$
-
-USE ecommerce $$
+USE ecommerce;
 
 -- 5 cargos
 INSERT INTO Cargo (nome) VALUES
@@ -8,7 +6,7 @@ INSERT INTO Cargo (nome) VALUES
 ('Vendedor'),
 ('Caixa'),
 ('Estoquista'),
-('Supervisor') $$
+('Supervisor');
 
 -- 20 produtos
 INSERT INTO Produto (nome, preco) VALUES
@@ -31,19 +29,16 @@ INSERT INTO Produto (nome, preco) VALUES
 ('Mousepad', 69.90),
 ('Controle USB', 149.00),
 ('Roteador Wi-Fi', 299.00),
-('Microfone USB', 229.00) $$
+('Microfone USB', 229.00);
 
--- 100 clientes nativos (gerados automaticamente)
+-- 100 clientes (loop MySQL)
+DELIMITER $$
 BEGIN
     DECLARE i INT DEFAULT 1;
     WHILE i <= 100 DO
-        INSERT INTO Cliente (nome, email)
-        VALUES (
-            CONCAT('Cliente ', i),
-            CONCAT('cliente', i, '@exemplo.com')
-        );
+        INSERT INTO Cliente (nome, dataNascimento)
+        VALUES (CONCAT('Cliente ', i), NULL);
         SET i = i + 1;
     END WHILE;
-END $$
-
+END$$
 DELIMITER ;
