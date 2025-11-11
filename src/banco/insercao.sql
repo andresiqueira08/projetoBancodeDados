@@ -9,7 +9,7 @@ INSERT INTO Cargo (nome) VALUES
 ('Supervisor');
 
 -- 20 produtos
-INSERT INTO Produto (nome, preco) VALUES
+INSERT INTO Produto (nome, valor) VALUES
 ('Mouse', 59.90),
 ('Teclado', 129.90),
 ('Monitor', 899.00),
