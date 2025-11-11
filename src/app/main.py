@@ -62,4 +62,4 @@ while True:
         print("Opção inválida.")
 
 conexao.close()
-print("Conexão encerrada.")
+print("Conexão encerrada.")
