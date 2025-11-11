@@ -48,7 +48,9 @@ CREATE TABLE Produto (
    descricao VARCHAR(255),
    valor DOUBLE NOT NULL,
    quantidadeEstoque INT DEFAULT 0,
-   obs TEXT
+   obs TEXT,
+   idVendedor INT,
+   FOREIGN KEY (idVendedor) REFERENCES Vendedor(id)
 );
 
 CREATE TABLE CompraVenda (
