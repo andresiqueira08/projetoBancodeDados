@@ -1,47 +1,65 @@
-from conectar import conectar, criar_banco_completo, destruir_banco, cadastrar_produto, cadastrar_cliente
+from conectar import (
+    conectar,
+    criar_banco,
+    destruir_banco,
+    cadastrar_produto,
+    cadastrar_cliente,
+    cadastrar_vendedor,
+    cadastrar_transportadora,
+    registrar_venda,
+    calcular_idade,
+    soma_fretes,
+    arrecadado,
+    listar_notificacoes
+)
 
-print("=== LOGIN NO SISTEMA ===")
-usuario = input("Usuário (admin, gerente, funcionario): ")
-senha = input("Senha: ")
-
-# Para criar banco, precisa conectar sem database primeiro
-if usuario == "admin":
-    conexao = conectar(usuario, senha, criar_db=True)
-else:
-    conexao = conectar(usuario, senha)
-
+conexao = conectar()
 if not conexao:
     exit()
 
 while True:
-    print("\n=== MENU DE OPÇÕES ===")
+    print("\nMENU PRINCIPAL")
     print("0 - Sair")
-    if usuario == "admin":
-        print("1 - Criar banco de dados completo")
-        print("2 - Destruir banco de dados")
-    if usuario in ("admin", "gerente"):
-        print("3 - Cadastrar produto")
-    if usuario in ("admin", "gerente", "funcionario"):
-        print("4 - Cadastrar cliente")
+    print("1 - Criar banco")
+    print("2 - Destruir banco")
+    print("3 - Cadastrar produto")
+    print("4 - Cadastrar cliente")
+    print("5 - Cadastrar vendedor")
+    print("6 - Cadastrar transportadora")
+    print("7 - Registrar venda")
+    print("8 - calcular_idade()")
+    print("9 - soma_fretes()")
+    print("10 - arrecadado()")
+    print("11 - Ver notificações")
 
-    try:
-        opcao = int(input("Escolha a opção desejada: "))
-    except ValueError:
-        print("Erro: Digite um número válido!")
-        continue
+    opcao = input("Opção: ")
 
-    if opcao == 0:
-        print("Saindo do sistema...")
+    if opcao == "0":
         break
-    elif opcao == 1 and usuario == "admin":
-        criar_banco_completo(conexao)
-    elif opcao == 2 and usuario == "admin":
+    elif opcao == "1":
+        criar_banco(conexao)
+    elif opcao == "2":
         destruir_banco(conexao)
-    elif opcao == 3 and usuario in ("admin", "gerente"):
+    elif opcao == "3":
         cadastrar_produto(conexao)
-    elif opcao == 4 and usuario in ("admin", "gerente", "funcionario"):
+    elif opcao == "4":
         cadastrar_cliente(conexao)
+    elif opcao == "5":
+        cadastrar_vendedor(conexao)
+    elif opcao == "6":
+        cadastrar_transportadora(conexao)
+    elif opcao == "7":
+        registrar_venda(conexao)
+    elif opcao == "8":
+        calcular_idade(conexao)
+    elif opcao == "9":
+        soma_fretes(conexao)
+    elif opcao == "10":
+        arrecadado(conexao)
+    elif opcao == "11":
+        listar_notificacoes(conexao)
     else:
-        print("⚠️ Acesso negado ou opção inválida!")
+        print("Opção inválida.")
 
 conexao.close()
+print("Conexão encerrada.")
