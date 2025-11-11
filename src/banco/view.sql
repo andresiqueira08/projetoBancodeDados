@@ -31,11 +31,11 @@ CREATE OR REPLACE VIEW viewProdutosMaisVendidos AS
 SELECT 
     p.id AS idProduto,
     p.nome AS produto,
-    p.preco AS valor_unitario,
+    p.valor AS valor_unitario,
     COUNT(cv.id) AS total_vendas,
     SUM(cv.valorTotal) AS valor_total_vendido,
     MAX(cv.data) AS ultima_venda
 FROM Produto p
 LEFT JOIN CompraVenda cv ON p.id = cv.idProduto
-GROUP BY p.id, p.nome, p.preco
+GROUP BY p.id, p.nome, p.valor
 ORDER BY total_vendas DESC, valor_total_vendido DESC;
