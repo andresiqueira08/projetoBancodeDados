@@ -43,7 +43,11 @@ while True:
         print("10 - arrecadado()")
         print("11 - Ver notificações")
 
-    opcao = int(input("Escolha a opção desejada: "))
+    try:
+        opcao = int(input("Escolha a opção desejada: ").strip())
+    except ValueError:
+        print("⚠ Entrada inválida! Digite um número.")
+        continue
 
     if opcao == 0:
         print("Saindo do sistema...")
