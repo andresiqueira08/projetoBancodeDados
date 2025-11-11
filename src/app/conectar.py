@@ -39,13 +39,13 @@ def cadastrar_produto(conexao):
     idp = int(input("ID do produto: "))
     nome = input("Nome: ")
     descricao = input("Descrição: ")
-    preco = float(input("Preço: "))
+    valor = float(input("Preço: "))
     obs = input("Observações: ")
 
     cursor.execute("""
-        INSERT INTO Produto (id, nome, descricao, preco, obs)
+        INSERT INTO Produto (id, nome, descricao, valor, obs)
         VALUES (%s, %s, %s, %s, %s);
-    """, (idp, nome, descricao, preco, obs))
+    """, (idp, nome, descricao, valor, obs))
     conexao.commit()
     print("Produto cadastrado.")
     cursor.close()
