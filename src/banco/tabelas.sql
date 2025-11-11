@@ -62,7 +62,7 @@ CREATE TABLE CompraVenda (
    destino VARCHAR(100),
    quantidade INT DEFAULT 1,
    valorFrete DECIMAL(10,2) DEFAULT 0,
-   valorTotal DECIMAL(12,2) AS (quantidade * (SELECT preco FROM Produto WHERE Produto.id = CompraVenda.idProduto)) STORED,
+   valorTotal DECIMAL(12,2) AS (quantidade * (SELECT valor FROM Produto WHERE Produto.id = CompraVenda.idProduto)) STORED,
    FOREIGN KEY (idCliente) REFERENCES Cliente(id),
    FOREIGN KEY (idVendedor) REFERENCES Vendedor(id),
    FOREIGN KEY (idProduto) REFERENCES Produto(id),
