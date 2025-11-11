@@ -1,8 +1,8 @@
 import mysql.connector
 
 def conectar():
-    user = input("Usuário do MySQL: ")
-    senha = input("Senha do MySQL: ")
+    user = input("Usuário: ")
+    senha = input("Senha: ")
 
     try:
         conexao = mysql.connector.connect(
