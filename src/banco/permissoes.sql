@@ -5,11 +5,11 @@ DROP USER IF EXISTS 'admin'@'%';
 DROP USER IF EXISTS 'gerente'@'%';
 DROP USER IF EXISTS 'funcionario'@'%';
 
-CREATE USER 'admin'@'%' IDENTIFIED BY 'admin123';
+CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin123';
 CREATE USER 'gerente'@'%' IDENTIFIED BY 'gerente123';
 CREATE USER 'funcionario'@'%' IDENTIFIED BY 'func123';
 
-GRANT ALL PRIVILEGES ON ecommerce.* TO 'admin'@'%' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON ecommerce.* TO 'admin'@'host' WITH GRANT OPTION;
 
 -- gerente pode ler/escrever em tabelas principais
 GRANT SELECT, INSERT, UPDATE, DELETE ON ecommerce.* TO 'gerente'@'%';
